@@ -56,10 +56,14 @@ class CarInterface(CarInterfaceBase):
       tire_stiffness_factor = 0.6371   # hand-tune
       ret.mass = 3045. * CV.LB_TO_KG + STD_CARGO_KG
 
-      ret.lateralTuning.init('indi')                                              
+      ret.lateralTuning.init('indi')
+      ret.lateralTuning.indi.innerLoopGainBP = [0.]
       ret.lateralTuning.indi.innerLoopGainV = [4.0]
+      ret.lateralTuning.indi.outerLoopGainBP = [0.]
       ret.lateralTuning.indi.outerLoopGainV = [3.0]
-      ret.lateralTuning.indi.timeConstant = 0.1 if ret.hasZss else 1.0
+      ret.lateralTuning.indi.timeConstantBP = [0.]
+      ret.lateralTuning.indi.timeConstantV = [0.1] if ret.hasZss else [1.0]
+      ret.lateralTuning.indi.actuatorEffectivenessBP = [0.]
       ret.lateralTuning.indi.actuatorEffectivenessV = [1.0]
       ret.steerActuatorDelay = 0.3
 
