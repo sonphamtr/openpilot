@@ -24,7 +24,6 @@ class CarInterface(CarInterfaceBase):
     ret.steerActuatorDelay = 0.12  # Default delay, Prius has larger delay
     ret.steerLimitTimer = 0.4
     ret.hasZss = 0x23 in fingerprint[0]  # Detect whether car has accurate ZSS
-
     # Improved longitudinal tune
     if candidate in [CAR.COROLLA_TSS2, CAR.COROLLAH_TSS2, CAR.RAV4_TSS2, CAR.RAV4H_TSS2]:
       ret.longitudinalTuning.deadzoneBP = [0., 8.05]
@@ -55,7 +54,7 @@ class CarInterface(CarInterfaceBase):
       ret.wheelbase = 2.70
       ret.steerRatio = 15.74   # unknown end-to-end spec
       tire_stiffness_factor = 0.6371   # hand-tune
-      ret.mass = 3370. * CV.LB_TO_KG + STD_CARGO_KG
+      ret.mass = 3045. * CV.LB_TO_KG + STD_CARGO_KG #Prius three 2018 mass
 
       ret.lateralTuning.init('indi')
       ret.lateralTuning.indi.innerLoopGainBP = [0.]
@@ -221,6 +220,7 @@ class CarInterface(CarInterfaceBase):
 
     elif candidate in [CAR.COROLLA_TSS2, CAR.COROLLAH_TSS2]:
       stop_and_go = True
+
       ret.safetyParam = 73
       ret.wheelbase = 2.67  # Average between 2.70 for sedan and 2.64 for hatchback
       ret.steerRatio = 13.9
