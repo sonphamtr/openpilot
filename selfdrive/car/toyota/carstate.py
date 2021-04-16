@@ -66,7 +66,7 @@ class CarState(CarStateBase):
 
     if self.cruise_active and not self.cruise_active_previous:
       self.needs_angle_offset_zss = True # cruise was just activated, so allow offset to be recomputed
-      self.out_of_tolerance_counter = 0 # resume using ZSS if needed
+      self.out_of_tolerance_counter = 0 # Allow ZSS re-use after disengage and re-engage
     self.cruise_active_previous = self.cruise_active
 
     #compute offset for torque steer
