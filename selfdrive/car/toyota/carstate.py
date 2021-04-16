@@ -16,7 +16,6 @@ class CarState(CarStateBase):
 
     # All TSS2 car have the accurate sensor
     self.accurate_steer_angle_seen = CP.carFingerprint in TSS2_CAR
-
     # On cars with cp.vl["STEER_TORQUE_SENSOR"]['STEER_ANGLE']
     # the signal is zeroed to where the steering angle is at start.
     # Need to apply an offset as soon as the steering angle measurements are both received
@@ -91,21 +90,21 @@ class CarState(CarStateBase):
       if self.out_of_tolerance_counter < 10 and not self.needs_angle_offset_zss:
         #check if zorro steer is out of tolerance
         if abs(self.stock_steer_value - self.zorro_steer_value) > 2.5:
-          ret.steeringAngle = self.stock_steer_value
+          ret.steeringAngleDeg = self.stock_steer_value
           self.steertype = 1
           if self.cruise_active:
             self.out_of_tolerance_counter = self.out_of_tolerance_counter + 1 #shoud not get here too often with cruis active
         else:
-          ret.steeringAngle = self.zorro_steer_value
+          ret.steeringAngleDeg = self.zorro_steer_value
           self.steertype = 3
       else:
-        ret.steeringAngle = self.stock_steer_value
+        ret.steeringAngleDeg = self.stock_steer_value
         self.steertype = 1
     elif self.accurate_steer_angle_seen:
-      ret.steeringAngle = self.torque_steer_value
+      ret.steeringAngleDeg = self.torque_steer_value
       self.steertype = 2
     else:
-      ret.steeringAngle = self.stock_steer_value
+      ret.steeringAngleDeg = self.stock_steer_value
       self.steertype = 1
 
     if (self.count % int(1.0 / DT_CTRL)) == 0:
@@ -113,7 +112,7 @@ class CarState(CarStateBase):
       cloudlog.info("*** Torque      *** %s" % self.torque_steer_value)
       cloudlog.info("*** Stock       *** %s" % self.stock_steer_value)
       cloudlog.info("*** Num of OTs  *** %s" % self.out_of_tolerance_counter)
-      cloudlog.info("*** OP is Using *** %s" % ret.steeringAngle)
+      cloudlog.info("*** OP is Using *** %s" % ret.steeringAngleDeg)
       steertypeText = "Undefined" #should never happen
       if self.steertype == 1:
         steertypeText = "Stock"
@@ -125,7 +124,7 @@ class CarState(CarStateBase):
       cloudlog.info("******* Using Steer Type: ******* %s" % steertypeText)
       cloudlog.info("====================================")
 
-    ret.steeringRate = cp.vl["STEER_ANGLE_SENSOR"]['STEER_RATE']
+    ret.steeringRateDeg = cp.vl["STEER_ANGLE_SENSOR"]['STEER_RATE']
     can_gear = int(cp.vl["GEAR_PACKET"]['GEAR'])
     ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(can_gear, None))
     ret.leftBlinker = cp.vl["STEERING_LEVERS"]['TURN_SIGNALS'] == 1
@@ -153,7 +152,6 @@ class CarState(CarStateBase):
     else:
       ret.cruiseState.standstill = self.pcm_acc_status == 7
     ret.cruiseState.enabled = self.cruise_active
-                                                                                     
     ret.cruiseState.nonAdaptive = cp.vl["PCM_CRUISE"]['CRUISE_STATE'] in [1, 2, 3, 4, 5, 6]
 
     if self.CP.carFingerprint == CAR.PRIUS:
